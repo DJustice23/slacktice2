@@ -1,7 +1,7 @@
 Given(/^I'm on the home page$/) do
   @api = Boomtown::Api.new(
-    ENV.fetch('BOOMTOWN_USERNAME'),
-    ENV.fetch('BOOMTOWN_PASSWORD')
+      ENV.fetch('BOOMTOWN_USERNAME'),
+      ENV.fetch('BOOMTOWN_PASSWORD')
   )
   @web = Boomtown::Web.new
   @web.visit '/'
@@ -30,8 +30,8 @@ And(/^each result mentions (.*)$/) do |phrase|
   # a .at-related-props-card - things with class inside a tags
   # a.at-related-props-card - a tags with class ...
   links.each do |link|
-    href   = link.attribute(:href)
-    id     = href.split('/').last
+    href = link.attribute(:href)
+    id = href.split('/').last
     result = @api.get_property_details id
 
     puts id
@@ -63,8 +63,8 @@ And(/^I fill in email$/) do
 end
 
 And(/^I fill in name and phone number/) do
-  @my_name  = Faker::Name.name
-  @my_phone = Faker::PhoneNumber.phone_number
+  @my_name = Faker::Name.name
+  @my_phone = '7045551234'
 
   form2 = @web.wait_for '.js-complete-register-form'
   i = form2.find_element(:name, 'fullname')
@@ -101,6 +101,41 @@ end
 And(/^I have a user account$/) do
   @web.visit '/account'
 
-  phone = @web.find '.at-phone-txt'
-  expect(phone.text).to eq @my_phone
+  # phone = @web.find '.at-phone-txt'
+  # expect(phone.text).to eq @my_phone
+end
+
+And(/^my agent is located in Charleston$/) do
+  link = @web.find '#menu-item-1154'
+  agent_link = link.find_element(:css, 'a')
+  href = agent_link.attribute(:href)
+  agent_id = href.split('/').last
+  for_real_agent_id = agent_id.split('-').first
+  result = @api.get_agent_details for_real_agent_id
+  expect(result['City'] == 'Charleston')
+end
+
+And(/^I click on the first property$/) do
+  results = @web.wait_for '.js-load-results'
+  prop1 = results.find_elements(:css, '.bt-listing-teaser__view-details').first
+  prop1.click
+  @web.wait_for '.bt-back-to-search'
+end
+
+And(/^I go back$/) do
+  back = @web.find '.bt-back-to-search'
+  back.click
+
+end
+
+And(/^I click on the second property$/) do
+  results = @web.wait_for '.js-load-results'
+  prop2 = results.find_elements(:css, '.bt-listing-teaser__view-details')
+  prop2[1].click
+end
+
+Then(/^I see a registration form$/) do
+  reg_form = @web.wait_for '.bt-squeeze'
+  email = reg_form.find_element(:name, 'email')
+  email.send_keys (Faker::Internet.email)
 end

@@ -2,11 +2,11 @@ Feature: search
   Background:
     Given I'm on the home page
 
-  Scenario: keyword search
-     When I search for "King street"
-     Then "King street" appears in the filter list
-      And there are at least 20 results
-      And each result mentions king
+#  Scenario: keyword search
+#     When I search for "King street"
+#     Then "King street" appears in the filter list
+#      And there are at least 20 results
+#      And each result mentions king
 
    Scenario: new user saves a search
       When I search for "Charleston"

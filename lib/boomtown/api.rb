@@ -39,5 +39,10 @@ module Boomtown
       data = send(:get, "/lc/1/listings/#{prop_id}") # {'LogSearch' => 'true'}
       data['Result']
     end
+
+    def get_agent_details(agent_id)
+      agent_info = send(:get, "/lc/1/agents/#{agent_id}")
+      agent_info['Result']
+    end
   end
 end
